@@ -8,8 +8,6 @@
 
 #define MAX_PROCESS_COUNT 100
 
-int showMenu();
-
 int main(int argc, char *argv[])
 {
     int count = 0, selectedNum;
