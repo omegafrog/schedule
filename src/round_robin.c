@@ -34,15 +34,16 @@ void round_robin(process *processList, unsigned int size,
             switch (curProcess->type)
             {
             case 0:
+                curProcess->startClockTime=clock;
                 push(readyQueue, curProcess);
                 break;
             case 1:
                 runningProcess = pop(readyQueue);
-                // 시작된 적이 없는 프로세스라면 시작 시간을 기록
-                if (runningProcess->startClockTime == -1)
-                {
-                    runningProcess->startClockTime = clock;
-                }
+                // // 시작된 적이 없는 프로세스라면 시작 시간을 기록
+                // if (runningProcess->startClockTime == -1)
+                // {
+                //     runningProcess->startClockTime = clock;
+                // }
                 // 프로세스 수행
                 // 프로세스의 computing time이 quantum time보다 긴 경우
                 // quantum time만큼 시간이 흐르고
@@ -74,10 +75,10 @@ void round_robin(process *processList, unsigned int size,
     while (!isEmpty(readyQueue))
     {
         process *runningProcess = pop(readyQueue);
-        if (runningProcess->startClockTime == -1)
-        {
-            runningProcess->startClockTime = clock;
-        }
+        // if (runningProcess->startClockTime == -1)
+        // {
+        //     runningProcess->startClockTime = clock;
+        // }
 
         if (runningProcess->computing_time > quantTime)
         {
