@@ -2,19 +2,16 @@
 #include <stdlib.h>
 #include <string.h>
 
-
-#include "schedule.h"
+#include "priority_scheduling.h"
 #include "result.h"
 #include "process.h"
 
 
 #define MAX_PROCESS_COUNT 100
 
-
-
 int getProcessInput(process*, int*);
 int showMenu();
-
+void show_output(Result* schedulingList, int  processCount);
 
 int main()
 {
@@ -41,13 +38,8 @@ int main()
 				break;
 			case 2:
 				priority_scheduling(processList, count, 20, schedulingList);
-				printf("---------------------Schedulling Output ------------------------------\n");
-				for (int i = 0; i < processCount; i++) {
-
-					printf("Process_id\t Queue_id \t\t priority\t computing_time\t turn_around_time\n");
-					printf("%d\t\t %-9s\t\t %d\t\t %d\t\t %d\n", schedulingList[i].process_id, schedulingList[i].process_qId, schedulingList[i].priority, schedulingList[i].computing_time, schedulingList[i].turnaround_time);
-
-				}
+				show_output(schedulingList, processCount);
+				
 				break;
 			case 3:
 				break;
@@ -110,3 +102,16 @@ int showMenu()
 
 
 
+void show_output(Result* schedulingList, int  processCount) {
+	printf("---------------------Schedulling Output ------------------------------\n");
+	int sum_turnaround_time = 0;
+	for (int i = 0; i < processCount; i++) {
+
+		printf("Process_id\t Queue_id \t\t priority\t computing_time\t turn_around_time\n");
+		printf("%d\t\t %-9s\t\t %d\t\t %d\t\t %d\n", schedulingList[i].process_id, schedulingList[i].process_qId, schedulingList[i].priority, schedulingList[i].computing_time, schedulingList[i].turnaround_time);
+		sum_turnaround_time += schedulingList[i].turnaround_time;
+
+	}
+	
+	printf("average turnaround_time : %d \n", sum_turnaround_time / processCount);
+}
