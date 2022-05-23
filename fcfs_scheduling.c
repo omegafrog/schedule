@@ -1,5 +1,8 @@
 #include "process.h"
 #include "result.h"
+#include "fcfs_scheduling.h"
+#include "fcfs_queue.h"
+
 #include <stdlib.h>
 #include <string.h >
 #include <stdio.h>
@@ -7,29 +10,8 @@
 //#include "priority_scheduling.h"
 #define MAX_QUEUE_SIZE 10
 
-typedef int element;
-typedef struct {	//큐 타입(원형 큐)
-	element data[MAX_QUEUE_SIZE];
-	int front, rear;
-} QueueType;
 
-void init_queue(QueueType* q) {	//레디큐 초기화
-	q->front = q->rear = 0;
-}
 
-void enqueue(QueueType* q, element item) {	//레디큐 삽입
-	q->rear = (q->rear + 1) % MAX_QUEUE_SIZE;
-	q->data[q->rear] = item;
-}
-
-element dequeue(QueueType* q) {	//레디큐 삭제
-	q->front = (q->front + 1) % MAX_QUEUE_SIZE;
-	return q->data[q->front];
-}
-
-int is_empty(QueueType* q) {	//공백 상태 검출
-	return (q->front == q->rear);
-}
 
 
 void fcfs_scheduling(process* processList, unsigned int size, Result* resultList) {	//자료형에 unsigned가 붙으면 0이상의 값만 표현함.
