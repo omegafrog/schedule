@@ -14,6 +14,7 @@ void priority_scheduling(process* processList, unsigned int size,
 	// 본래 입력을 오염시키지 않기 위해서 새로운 입력 리스트 생성
 	process* newProcessList = (process*)malloc(sizeof(process) * size);
 	memcpy(newProcessList, processList, sizeof(process) * size);
+
 	process* curProcess = NULL; //입력받은 리스트에서 꺼내올 하나의 프로세스
 	process* selectedProcess = NULL;  // 스케줄링으로 선택되어 큐에서 pop된 프로세스
 
@@ -48,6 +49,10 @@ void priority_scheduling(process* processList, unsigned int size,
 
 
 			selectedProcess = selectProcessFromQue(&q1, &q2, &q3, &q4);
+			if (selectedProcess == NULL) {
+				printf("<ERROR> 현재 큐에 어떠한 프로세스도 대기중이지 않습니다. 유효하지 않은 요청입니다. \n");
+				exit(1);
+			}
 			if (selectedProcess->priority < 1) { //만약 꺼내온 프로세스가 실시간 프로세스이면 computing시간을 전부 사용
 				curTime += selectedProcess->remain_computing_time;
 				selectedProcess->end_time = curTime;   //프로세스의 수행을 마쳤으므로 end시간을 기록하고 해당 정보를 resultList에 저장
