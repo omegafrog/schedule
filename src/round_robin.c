@@ -25,6 +25,7 @@ void round_robin(process *processList, unsigned int size,
     // type1이 나오면 스케쥴링 시작 신호. RR이므로 가장 먼저 들어온 프로세스를 pop한다
     process *curProcess = NULL;
     process *runningProcess = NULL;
+    int idx = 0;
     for (int i = 0; i < size; ++i)
     {
         curProcess = newProcessList + i;
@@ -34,25 +35,20 @@ void round_robin(process *processList, unsigned int size,
             switch (curProcess->type)
             {
             case 0:
-                curProcess->startClockTime=clock;
+                curProcess->start_time = clock;
                 push(readyQueue, curProcess);
                 break;
             case 1:
                 runningProcess = pop(readyQueue);
-                // // 시작된 적이 없는 프로세스라면 시작 시간을 기록
-                // if (runningProcess->startClockTime == -1)
-                // {
-                //     runningProcess->startClockTime = clock;
-                // }
                 // 프로세스 수행
                 // 프로세스의 computing time이 quantum time보다 긴 경우
                 // quantum time만큼 시간이 흐르고
                 // computing time에서 quantum time만큼 빼준다
                 // 그리고 이 프로세스는 다시 readyqueue에 들어간다.
-                if (runningProcess->computing_time > quantTime)
+                if (runningProcess->remain_computing_time > quantTime)
                 {
                     clock += quantTime;
-                    runningProcess->computing_time -= quantTime;
+                    runningProcess->remain_computing_time -= quantTime;
                     push(readyQueue, runningProcess);
                 }
                 // 프로세스의 computing time이 quantum time보다 짧은 경우
@@ -61,8 +57,12 @@ void round_robin(process *processList, unsigned int size,
                 // 이 프로세스는 종료되었으므로 다시 readyQueue에 들어가지 않는다.
                 else
                 {
-                    clock += runningProcess->computing_time;
-                    runningProcess->endClockTime = clock;
+                    clock += runningProcess->remain_computing_time;
+                    runningProcess->end_time = clock;
+                    resultList[idx].process_id = runningProcess->process_id;
+                    resultList[idx].priority = runningProcess->priority;
+                    resultList[idx].computing_time = runningProcess->computing_time;
+                    resultList[idx++].turnaround_time = runningProcess->end_time - runningProcess->start_time;
                 }
                 break;
             default:
@@ -80,30 +80,23 @@ void round_robin(process *processList, unsigned int size,
         //     runningProcess->startClockTime = clock;
         // }
 
-        if (runningProcess->computing_time > quantTime)
+        if (runningProcess->remain_computing_time > quantTime)
         {
             clock += quantTime;
-            runningProcess->computing_time -= quantTime;
+            runningProcess->remain_computing_time -= quantTime;
             push(readyQueue, runningProcess);
         }
         else
         {
-            clock += runningProcess->computing_time;
-            runningProcess->endClockTime = clock;
+            clock += runningProcess->remain_computing_time;
+            runningProcess->end_time = clock;
+            resultList[idx].process_id = runningProcess->process_id;
+            resultList[idx].priority = runningProcess->priority;
+            resultList[idx].computing_time = runningProcess->computing_time;
+            resultList[idx++].turnaround_time = runningProcess->end_time - runningProcess->start_time;
         }
     }
 
-    // 결과를 resultList에 저장
-    // turnaroundTime = endClockTime - startClockTime
-    // 이외는 동일 결과.
-    for (int i = 0; i < size; ++i)
-    {
-        curProcess = newProcessList + i;
-        resultList[i].process_id = curProcess->process_id;
-        resultList[i].priority = curProcess->priority;
-        resultList[i].computing_time = curProcess->computing_time;
-        resultList[i].turnaround_time = curProcess->endClockTime - curProcess->startClockTime;
-    }
     // 동적할당한 메모리 해제
     free(newProcessList);
     free(readyQueue);

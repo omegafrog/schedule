@@ -7,7 +7,8 @@ typedef struct _perocess
     int process_id;
     int priority;
     int computing_time;
-    int startClockTime;
-    int endClockTime;
+    int remain_computing_time; // 남은
+    int start_time;
+    int end_time;
 } process;
 #endif
