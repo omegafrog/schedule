@@ -18,6 +18,9 @@ void round_robin(process *processList, unsigned int size,
     ReadyQueue *readyQueue = (ReadyQueue *)malloc(sizeof(readyQueue));
     initQueue(readyQueue);
 
+    ReadyQueue *realTimeQueue = (ReadyQueue *)malloc(sizeof(readyQueue));
+    initQueue(realTimeQueue);
+
     // clock time
     int clock = 0;
 
@@ -36,26 +39,30 @@ void round_robin(process *processList, unsigned int size,
             {
             case 0:
                 curProcess->start_time = clock;
-                push(readyQueue, curProcess);
+                if (curProcess->priority < 0)
+                {
+                    push(realTimeQueue, curProcess);
+                }
+                else
+                {
+                    push(readyQueue, curProcess);
+                }
                 break;
             case 1:
-                runningProcess = pop(readyQueue);
+                if (!isEmpty(realTimeQueue))
+                {
+                    runningProcess = pop(realTimeQueue);
+                }
+                else
+                {
+                    runningProcess = pop(readyQueue);
+                }
                 // 프로세스 수행
                 // 프로세스의 computing time이 quantum time보다 긴 경우
                 // quantum time만큼 시간이 흐르고
                 // computing time에서 quantum time만큼 빼준다
                 // 그리고 이 프로세스는 다시 readyqueue에 들어간다.
-                if (runningProcess->remain_computing_time > quantTime)
-                {
-                    clock += quantTime;
-                    runningProcess->remain_computing_time -= quantTime;
-                    push(readyQueue, runningProcess);
-                }
-                // 프로세스의 computing time이 quantum time보다 짧은 경우
-                // computing time만큼 시간이 흐르고
-                // endClockTime을 기록한다.
-                // 이 프로세스는 종료되었으므로 다시 readyQueue에 들어가지 않는다.
-                else
+                if (runningProcess->priority < 0)
                 {
                     clock += runningProcess->remain_computing_time;
                     runningProcess->end_time = clock;
@@ -63,6 +70,28 @@ void round_robin(process *processList, unsigned int size,
                     resultList[idx].priority = runningProcess->priority;
                     resultList[idx].computing_time = runningProcess->computing_time;
                     resultList[idx++].turnaround_time = runningProcess->end_time - runningProcess->start_time;
+                }
+                else
+                {
+                    if (runningProcess->remain_computing_time > quantTime)
+                    {
+                        clock += quantTime;
+                        runningProcess->remain_computing_time -= quantTime;
+                        push(readyQueue, runningProcess);
+                    }
+                    // 프로세스의 computing time이 quantum time보다 짧은 경우
+                    // computing time만큼 시간이 흐르고
+                    // endClockTime을 기록한다.
+                    // 이 프로세스는 종료되었으므로 다시 readyQueue에 들어가지 않는다.
+                    else
+                    {
+                        clock += runningProcess->remain_computing_time;
+                        runningProcess->end_time = clock;
+                        resultList[idx].process_id = runningProcess->process_id;
+                        resultList[idx].priority = runningProcess->priority;
+                        resultList[idx].computing_time = runningProcess->computing_time;
+                        resultList[idx++].turnaround_time = runningProcess->end_time - runningProcess->start_time;
+                    }
                 }
                 break;
             default:
