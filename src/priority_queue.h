@@ -1,7 +1,7 @@
-#ifndef __READY_QUEUE_H__
+#ifndef __PRIORITY_QUEUE_H__
 #include "process.h"
 
-#define __READY_QUEUE_H__
+#define __PRIORITY_QUEUE_H__
 
 typedef struct que_
 {
