@@ -1,6 +1,8 @@
 #ifndef __READY_QUEUE_H__
 #include "process.h"
 
+#define __READY_QUEUE_H__
+
 typedef struct que_
 {
 	process *processData;
