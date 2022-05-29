@@ -5,6 +5,8 @@
 #include "priority_scheduling.h"
 #include "result.h"
 #include "process.h"
+#include "fcfs_scheduling.h"
+#include "fcfs_queue.h"
 
 
 #define MAX_PROCESS_COUNT 100
@@ -42,6 +44,7 @@ int main()
 				
 				break;
 			case 3:
+				fcfs_scheduling(processList, count, schedulingList);
 				break;
 			case 4:
 				flag = 0;
